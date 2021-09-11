@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+    <link rel="stylesheet" href="{% static 'css/semantic.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    
+    <title>Covid Tracker</title>
+</head>
+<body>
+
+    {% include "navbar.html" %}
+   
+    <div class="ui container">
+        <form action="" id="post-form">
+            {% csrf_token %}
+            <div class="ui form">
+                <div class="field">
+                  <label>Insert Country</label>
+                  <textarea rows="1" name="country" id="country"></textarea>
+                  <button class="ui blue button" style="margin-top: 10px;">Search</button>
+                </div>
+              </div>
+        </form>
+        <div id="result">
+
+        </div>
+    </div>
+{% block scripts %}
+<script >
+    const covidContainer = document.getElementById('result');
+    $(document).on('submit','#post-form',function(e){
+        e.preventDefault()
+
+        $.ajax({
+            type:'POST',
+            url:'',
+            data:{
+                 country:$('#country').val(),
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                 },
+            success:function(response){
+                console.log(response)
+               covidContainer.innerHTML = `<div class="result-container">
+                <div class="general result1">
+                    <h3>Continent</h3>
+                    <p class="ui statistic">${response[0].continent}</p>
+                </div>
+                <div class="general result2">
+                    <h3>Country</h3>
+                    <i class="${response[0].country.toLowerCase()} flag"></i>
+                    <p class="ui statistic">${response[0].country}</p>
+                </div>
+                <div class="general result3">
+                    <h3>Population</h3>
+                    <p class="ui statistic">${response[0].population}</p>
+                </div>
+                <div class="general result4">
+                    <h3>Today's Date</h3>
+                    <p class="ui statistic">${response[0].day}</p>
+                </div>
+            </div>
+            <div class="result-container">
+                <div class="general result5">
+                    <h3>All Cases</h5>
+                    <p class="ui statistic">${response[0].cases.active}</p>
+                </div>
+                <div class="general result6">
+                    <h3>Recovered</h3>
+                    <p class="ui statistic">${response[0].cases.recovered}</p>
+                </div>
+                <div class="general result7">
+                    <h4> Tested </h4>
+                    <p class="ui statistic">${response[0].tests.total}</p>
+                </div>
+                <div class="general result8">
+                    <h3>Deaths</h3>
+                    <p class="ui statistic">${response[0].deaths.total}</p>
+                </div>
+            </div>`
+            },
+            error: function (error) {
+               alert('Sorry an error occured.Please try again')
+            }
+        });
+      });
+</script>
+{% endblock scripts %}
+
+
+
+
+
+
+    <script src="{% static 'js/semantic.min.js' %}"></script>
+</body>
+</html>

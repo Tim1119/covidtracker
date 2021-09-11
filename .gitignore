@@ -1,0 +1,4 @@
+covid19tracker
+__pycache__
+*.sqlite3
+.env
